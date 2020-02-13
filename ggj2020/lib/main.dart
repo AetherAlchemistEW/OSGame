@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'homepage.dart';
+import 'pages/homepage.dart';
 import 'ThemeHandler.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'sidebar/sideBarLayout.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   final ThemeHandler handler = ThemeHandler();
@@ -18,7 +22,8 @@ class MyApp extends StatelessWidget {
           return new MaterialApp(
             title: 'Flutter Demo',
             theme: theme,
-            home: new MyHomePage(title: 'Flutter Demo Home Page', themeHandler: handler),
+            home: SideBarLayout(handler: handler,)
+            //home: new MyHomePage(title: 'Flutter Demo Home Page', themeHandler: handler),
           );
         }
     );
