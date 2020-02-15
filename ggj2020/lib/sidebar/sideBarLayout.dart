@@ -11,7 +11,7 @@ class SideBarLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        MyHomePage(title: "Main Page",themeHandler: handler),
+        MyHomePage(title: "Main Page", themeHandler: handler),
         SideBar(),
       ],
     );

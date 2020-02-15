@@ -22,13 +22,13 @@ class _MyHomePageState extends State<MyHomePage> {
   GlobalKey key = GlobalKey();
 
   List items = [
-    MenuItem(name: 'Planet', color: Colors.purple),
-    MenuItem(name: 'Camera', color: Colors.greenAccent),
-    MenuItem(name: 'Heart', color: Colors.pink),
-    MenuItem(name: 'Person', color: Colors.yellow),
+    FlareMenuItem(name: 'Planet', color: Colors.purple),
+    FlareMenuItem(name: 'Camera', color: Colors.greenAccent),
+    FlareMenuItem(name: 'Heart', color: Colors.pink),
+    FlareMenuItem(name: 'Person', color: Colors.yellow),
   ];
 
-  MenuItem active;
+  FlareMenuItem active;
 
   void _incrementCounter() {
     setState(() {
@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }*/
 
-  Widget _flare(MenuItem item) {
+  Widget _flare(FlareMenuItem item) {
     return GestureDetector(
       child: AspectRatio(
         aspectRatio: 1,
@@ -166,8 +166,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class MenuItem {
+class FlareMenuItem {
   final String name;
   final Color color;
-  MenuItem({this.name, this.color});
+  FlareMenuItem({this.name, this.color});
 }
