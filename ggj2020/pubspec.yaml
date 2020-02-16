@@ -28,6 +28,8 @@ dependencies:
   curved_navigation_bar: ^0.3.1
   flare_flutter: ^2.0.1
   rxdart: ^0.23.1
+  flutter_map: ^0.8.2
+  location: ^2.4.0
 
 dev_dependencies:
   flutter_test:
