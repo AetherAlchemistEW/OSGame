@@ -29,6 +29,7 @@ dependencies:
   flare_flutter: ^2.0.1
   rxdart: ^0.23.1
   flutter_map: ^0.8.2
+  user_location: ^0.1.2
   location: ^2.4.0
 
 dev_dependencies:
