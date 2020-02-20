@@ -16,6 +16,7 @@ class _MapState extends State<Map> {
   Stream<LocationData> locationStream;
   StreamSink<LocationData> locationSink;
   MapController mapController;
+  bool initialSet = false;
 
   LocationData blankData = LocationData.fromMap({
     'latitude': 0,
@@ -48,59 +49,62 @@ class _MapState extends State<Map> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: StreamBuilder<LocationData>(
-            initialData: blankData,
-            stream: locationStream,
-            builder: (context, snapshot) {
-              return Stack(
-                children: <Widget>[
-                  _buildMap(
-                      context,
-                      new LatLng(
-                          snapshot.data.latitude, snapshot.data.longitude)),
-                  //new LatLng(snapshot.data.latitude, snapshot.data.longitude)),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      verticalDirection: VerticalDirection.down,
-                      children: <Widget>[
-                        RaisedButton(
-                          elevation: 5,
-                          onPressed: () => Navigator.pop(context),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Theme.of(context).iconTheme.color,
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Card(
+          child: StreamBuilder<LocationData>(
+              initialData: blankData,
+              stream: locationStream,
+              builder: (context, snapshot) {
+                return Stack(
+                  children: <Widget>[
+                    _buildMap(
+                        context,
+                        new LatLng(
+                            snapshot.data.latitude, snapshot.data.longitude)),
+                    //new LatLng(snapshot.data.latitude, snapshot.data.longitude)),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        verticalDirection: VerticalDirection.down,
+                        children: <Widget>[
+                          RaisedButton(
+                            elevation: 5,
+                            onPressed: () => Navigator.pop(context),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Theme.of(context).iconTheme.color,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            verticalDirection: VerticalDirection.up,
-                            children: <Widget>[
-                              //Text("Attribution"),
-                              RaisedButton(
-                                elevation: 5,
-                                onPressed: () => _mapCentre(
-                                    new LatLng(snapshot.data.latitude,
-                                        snapshot.data.longitude),
-                                    13),
-                                child: Icon(
-                                  Icons.filter_center_focus,
-                                  color: Theme.of(context).iconTheme.color,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              verticalDirection: VerticalDirection.up,
+                              children: <Widget>[
+                                //Text("Attribution"),
+                                RaisedButton(
+                                  elevation: 5,
+                                  onPressed: () => _mapCentre(
+                                      new LatLng(snapshot.data.latitude,
+                                          snapshot.data.longitude),
+                                      13),
+                                  child: Icon(
+                                    Icons.filter_center_focus,
+                                    color: Theme.of(context).iconTheme.color,
+                                  ),
                                 ),
-                              ),
-                              _details(context, snapshot.data),
-                            ],
+                                _details(context, snapshot.data),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }));
+                  ],
+                );
+              })),
+    );
   }
 
   void _mapCentre(LatLng pos, double zoom){
@@ -167,7 +171,10 @@ class _MapState extends State<Map> {
             if (mounted) {
               setState(() {
                 locationSink.add(result);
-                _mapCentre(new LatLng(location.latitude, location.longitude), 13);
+                if(initialSet == false) {
+                  _mapCentre(new LatLng(location.latitude, location.longitude), 13);
+                  initialSet = true;
+                }
               });
             }
           });
