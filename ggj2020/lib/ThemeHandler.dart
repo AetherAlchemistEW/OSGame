@@ -1,39 +1,53 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeHandler{
-  int index = 0;
-  List<ThemeData> themes;
 
-  Future<bool> saveThemePreference(int themeIndex) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setInt("theme", themeIndex);
-  }
+  Stream<ThemeData> themeStream;
+  StreamSink<ThemeData> themeSink;
+  StreamController<ThemeData> themeController;
 
-  Future<int> loadThemePreference() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(prefs.get("theme") != null){
-      int themePref = prefs.getInt("theme");
-      index = themePref;
-      print(themePref);
-      return themePref;
-    } else{
-      print('null');
-      return 0;
-    }
-  }
+  void init(){
+    themeController = PublishSubject<ThemeData>();
+    themeStream = themeController.stream;
+    themeSink = themeController.sink;
 
-  ThemeData mainTheme(){
     themes = List<ThemeData>();
     themes.add(destroyedTheme());
     themes.add(partialRepairTheme());
     themes.add(repairedTheme());
 
-    //loadThemePreference().then((int x){
-
-    return themes[index];
+    loadThemePreference().then(setTheme);
   }
 
+  void dispose(){
+    themeSink.close();
+    themeController.close();
+  }
+
+  int themeCount = 3;
+  List<ThemeData> themes;
+
+  Future<void> saveThemePreference(int themeIndex) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("theme", themeIndex);
+}
+
+  Future<int> loadThemePreference() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int themePref = prefs.getInt("theme");
+    return themePref;
+  }
+
+  void setTheme(int themeIndex){
+    themeSink.add(themes[themeIndex]);
+    saveThemePreference(themeIndex);
+  }
+
+  //----THEMES-----
   ThemeData destroyedTheme(){
     return ThemeData(
       colorScheme: ColorScheme.dark(),

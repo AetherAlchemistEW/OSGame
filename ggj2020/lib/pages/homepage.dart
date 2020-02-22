@@ -1,5 +1,4 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:ggj2020/ThemeHandler.dart';
@@ -17,7 +16,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   GlobalKey key = GlobalKey();
 
   List items = [
@@ -29,16 +27,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   FlareMenuItem active;
 
-  void _incrementTheme() {
-    setState(() {
-      if (_counter < 2) {
-        _counter++;
-      } else {
-        _counter = 0;
-      }
-      widget.themeHandler.index = _counter;
-      DynamicTheme.of(context).setThemeData(widget.themeHandler.mainTheme());
-    });
+  List<Widget> _themeButtons(BuildContext context){
+    List<Widget> buttons = new List<Widget>();
+
+    for(var i = 0; i < widget.themeHandler.themeCount; i++){
+      ThemeData data = widget.themeHandler.themes[i];
+      buttons.add(Container(
+        color: data.accentColor,
+        child: RaisedButton(
+            color: data.backgroundColor,
+            elevation: data.buttonTheme.height,
+            onPressed: () => widget.themeHandler.setTheme(i),
+            child: Text("Theme $i", style: data.textTheme.display1,),
+          ),
+        )
+      );
+    }
+
+    return buttons;
   }
 
   void _newPage(int index) {
@@ -59,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
         key: key,
-        backgroundColor: Theme.of(context).appBarTheme.textTheme.title.color,
+        backgroundColor: Theme.of(context).appBarTheme.color,
         buttonBackgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
         color: Theme.of(context).accentColor,
         animationDuration: Duration(milliseconds: 200),
@@ -90,57 +96,22 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'You have pushed the button this many times:',
+                'Select a theme:',
                 style: Theme.of(context).textTheme.body1,
               ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.display1,
-              ),
+              Center(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: _themeButtons(context),
+                ),
+              )
             ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        elevation: Theme.of(context).floatingActionButtonTheme.elevation,
-        onPressed: _incrementTheme,
-        tooltip: 'Next theme',
-        child: Icon(Icons.chevron_right, color: Theme.of(context).iconTheme.color,),
-      ),
     );
 
   }
-
-  /*Widget _navBarElement(BuildContext context, int index){
-    double w = MediaQuery.of(context).size.width;
-    return Container(
-      height: 80,
-      color: Colors.black,
-      child: Stack(
-        //  <-- 2. Define a stack
-        children: [
-          AnimatedContainer(
-            //  <-- 3. Animated top bar
-            duration: Duration(milliseconds: 200),
-            alignment: Alignment(active.x, -1),
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 1000),
-              height: 8,
-              width: w * 0.2,
-              color: active.color,
-            ),
-          ),
-          Container(
-            // <-- 4. Main menu row
-              child: _flare(items[index]),
-                    // _flare(items[1]),
-                    //_flare(items[2]),
-                    //_flare(items[3]),
-          )
-        ],
-      ),
-    );
-  }*/
 
   Widget _flare(FlareMenuItem item) {
     return GestureDetector(
