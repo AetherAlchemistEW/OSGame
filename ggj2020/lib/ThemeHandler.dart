@@ -1,13 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeHandler{
   int index = 0;
+  List<ThemeData> themes;
+
+  Future<bool> saveThemePreference(int themeIndex) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setInt("theme", themeIndex);
+  }
+
+  Future<int> loadThemePreference() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.get("theme") != null){
+      int themePref = prefs.getInt("theme");
+      index = themePref;
+      print(themePref);
+      return themePref;
+    } else{
+      print('null');
+      return 0;
+    }
+  }
 
   ThemeData mainTheme(){
-    final List<ThemeData> themes = List<ThemeData>();
+    themes = List<ThemeData>();
     themes.add(destroyedTheme());
     themes.add(partialRepairTheme());
     themes.add(repairedTheme());
+
+    //loadThemePreference().then((int x){
 
     return themes[index];
   }

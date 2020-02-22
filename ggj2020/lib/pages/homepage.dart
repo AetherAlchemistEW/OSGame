@@ -18,7 +18,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  int _page;
   GlobalKey key = GlobalKey();
 
   List items = [
@@ -30,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   FlareMenuItem active;
 
-  void _incrementCounter() {
+  void _incrementTheme() {
     setState(() {
       if (_counter < 2) {
         _counter++;
@@ -104,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         elevation: Theme.of(context).floatingActionButtonTheme.elevation,
-        onPressed: _incrementCounter,
+        onPressed: _incrementTheme,
         tooltip: 'Next theme',
         child: Icon(Icons.chevron_right, color: Theme.of(context).iconTheme.color,),
       ),
