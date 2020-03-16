@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ggj2020/pages/newpage.dart';
 import 'package:ggj2020/pages/map.dart';
 import 'package:rxdart/rxdart.dart';
-import 'menu_item.dart';
+import '../elements/menu_item.dart';
 
 class SideBar extends StatefulWidget {
+  const SideBar({Key key, this.user}) : super(key: key);
+  final FirebaseUser user;
 
   @override
   _SideBarState createState() => _SideBarState();
@@ -69,11 +72,11 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
             children: <Widget>[
               Expanded(
                 child: Container(
-                  color: Colors.blueAccent[400],
+                  color: Theme.of(context).accentColor,
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: 100,),
-                      FakeListTile(context, (snapshot.data)),
+                      _fakeListTile(context, (snapshot.data)),
                       Divider(
                         height: 64,
                         thickness: 0.5,
@@ -97,7 +100,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                   child: Container(
                     width: 35,
                     height: 110,
-                    color: Colors.blueAccent[400],
+                    color: Theme.of(context).accentColor,
                     alignment: Alignment.centerLeft,
                     child: AnimatedIcon(
                       progress: _animationController.view,
@@ -113,35 +116,35 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
       }
     );
   }
-}
 
-Widget FakeListTile(BuildContext context, bool open) {
+  Widget _fakeListTile(BuildContext context, bool open) {
 
-  return Container(
-    child: Row(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            child: Icon(
-              Icons.perm_identity,
-              color: Colors.white,
+    return Container(
+      child: Row(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+              child: Icon(
+                Icons.perm_identity,
+                color: Colors.white,
+              ),
+              radius: 40,
             ),
-            radius: 40,
           ),
-        ),
 
-        Column(
-          children: <Widget>[
-            Text("Ralph", style: TextStyle(color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.w800,),),
-            Text("ralph@pexur.com", style: TextStyle(color: Colors.blue[200],
-              fontSize: 20,
-              fontWeight: FontWeight.w800,),),
-          ],
-        ),
-      ],
-    ),
-  );
+          Column(
+            children: <Widget>[
+              Text("Ralph", style: TextStyle(color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.w800,),),
+              Text("widget.user.email", style: TextStyle(color: Colors.blue[200],
+                fontSize: 20,
+                fontWeight: FontWeight.w800,),),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

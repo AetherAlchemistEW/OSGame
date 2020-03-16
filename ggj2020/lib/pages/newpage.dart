@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ggj2020/main.dart';
+import 'package:ggj2020/pages/Setup/login_page.dart';
 
 class NewPage extends StatelessWidget {
   @override
@@ -8,14 +13,23 @@ class NewPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Text(
-                "New Page"
+                "Sign Out"
             ),
             FloatingActionButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => _signOut(context),
             )
           ],
         ),
       )
     );
+  }
+
+  Future<void> _signOut (BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      exit(0);
+    } catch (e) {
+      print(e.message);
+    }
   }
 }

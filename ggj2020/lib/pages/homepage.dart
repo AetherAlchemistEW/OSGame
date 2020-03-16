@@ -1,13 +1,18 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+//import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flare_flutter/flare_actor.dart';
+//import 'package:flare_flutter/flare_controller.dart';
+import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:ggj2020/ThemeHandler.dart';
-import 'package:meta/meta.dart';
+//import 'package:ggj2020/ThemeHandler.dart';
+import 'package:ggj2020/pages/ThemePage.dart';
+import 'package:ggj2020/pages/collection.dart';
+import 'package:ggj2020/pages/filesPage.dart';
+import 'package:ggj2020/pages/newpage.dart';
+//import 'package:meta/meta.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, @required this.themeHandler})
+  MyHomePage({Key key, this.title})
       : super(key: key);
-  final ThemeHandler themeHandler;
 
   final String title;
 
@@ -17,53 +22,76 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   GlobalKey key = GlobalKey();
+  int _barIndex = 0;
 
   List items = [
-    FlareMenuItem(name: 'Planet', color: Colors.purple),
-    FlareMenuItem(name: 'Camera', color: Colors.greenAccent),
-    FlareMenuItem(name: 'Heart', color: Colors.pink),
-    FlareMenuItem(name: 'Person', color: Colors.yellow),
+    FlareMenuItem(name: 'Planet', color: Colors.purple, controller: new FlareControls()),
+    FlareMenuItem(name: 'Camera', color: Colors.greenAccent, controller: new FlareControls()),
+    FlareMenuItem(name: 'Heart', color: Colors.pink, controller: new FlareControls()),
+    FlareMenuItem(name: 'Person', color: Colors.yellow, controller: new FlareControls()),
   ];
 
-  FlareMenuItem active;
+  List<FlareControls> controllers;
 
-  List<Widget> _themeButtons(BuildContext context){
-    List<Widget> buttons = new List<Widget>();
+  //FlareMenuItem active;
 
-    for(var i = 0; i < widget.themeHandler.themeCount; i++){
-      ThemeData data = widget.themeHandler.themes[i];
-      buttons.add(Container(
-        color: data.accentColor,
-        child: RaisedButton(
-            color: data.backgroundColor,
-            elevation: data.buttonTheme.height,
-            onPressed: () => widget.themeHandler.setTheme(i),
-            child: Text("Theme $i", style: data.textTheme.display1,),
-          ),
-        )
-      );
-    }
+  /*Navigator _newPage(int index) {
 
-    return buttons;
-  }
-
-  void _newPage(int index) {
-    //Navigator.of(context).push(route)
-  }
+  }*/
 
   @override
   void initState() {
     super.initState();
+    controllers = new List<FlareControls>();
 
-    active = items[0]; // <-- 1. Activate a menu item
+    for(int i = 0; i < items.length; i++){
+      FlareMenuItem c = items[i];
+      controllers.add(c.controller);
+    }
+    //active = items[0]; // <-- 1. Activate a menu item
   }
 
   @override
   Widget build(BuildContext context) {
-    active = items[0];
+    //active = items[0];
 
     return Scaffold(
-      bottomNavigationBar: CurvedNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
+        key: key,
+        //Theme.of(context).appBarTheme.color,
+        //showSelectedLabels: true,
+        //showUnselectedLabels: false,
+        onTap: (int x) {setState(() {
+          _barIndex = x;
+          //set route here
+          controllers[x].play('go');
+        });},
+        currentIndex: _barIndex,
+        iconSize: 50,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: _flare(items[0]),
+            title: Text(""),
+            backgroundColor: Colors.black,
+          ),
+          BottomNavigationBarItem(
+            icon:  _flare(items[1]),
+            title: Text(""),
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon:  _flare(items[2]),
+            title: Text(""),
+            backgroundColor: Colors.yellow,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_box),//_flare(items[3]),
+            title: Text("Profile"),
+            backgroundColor: Colors.green,
+          ),
+        ],
+      ),
+      /*CurvedNavigationBar(
         key: key,
         backgroundColor: Theme.of(context).appBarTheme.color,
         buttonBackgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
@@ -84,12 +112,33 @@ class _MyHomePageState extends State<MyHomePage> {
             _newPage(index);
           });
         },
-      ),
+      ),*/
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Theme.of(context).accentColor,
       ),
-      body: Container(
+
+      body: Navigator(
+        onGenerateRoute: (RouteSettings settings){
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (BuildContext context){
+            switch(_barIndex){
+              case 0:
+                return ThemePage();
+              case 1:
+                return FilesPage();
+              case 2:
+                return CollectionPage();
+              case 3:
+                return NewPage();
+            }
+            return null;
+          }
+      );
+    },
+    )
+      /*Container(
         color: Theme.of(context).backgroundColor,
         child: Center(
           child: Column(
@@ -108,36 +157,37 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-      ),
+      ),*/
     );
-
   }
 
   Widget _flare(FlareMenuItem item) {
     return GestureDetector(
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: FlareActor(
-            'assets/${item.name}.flr',
-            alignment: Alignment.center,
-            fit: BoxFit.contain,
-            animation: 'go',
+        child: AspectRatio(
+          aspectRatio: 2,
+          child: Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: FlareActor(
+              'assets/${item.name}.flr',
+              alignment: Alignment.center,
+              fit: BoxFit.scaleDown,
+              animation: 'go',
+              controller: item.controller,
+            ),
           ),
         ),
-      ),
-      /*onTap: () {
-        setState(() {
-          active = item;
-        });
-      },*/
-    );
+        /*onTap: () {
+          setState(() {
+            //active = item;
+          });
+        },*/
+      );
   }
 }
 
 class FlareMenuItem {
   final String name;
   final Color color;
-  FlareMenuItem({this.name, this.color});
+  final FlareControls controller;
+  FlareMenuItem({this.name, this.color, this.controller});
 }
