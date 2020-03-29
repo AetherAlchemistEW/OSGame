@@ -21,34 +21,40 @@ class _UploaderState extends State<Uploader> {
 
 
   void _startUpload() {
-    final String uid = Provider.of<String>(context);
-    String filePath = '$uid/images/${DateTime.now()}.png';
+    final String uid = Provider.of<String>(context, listen: false);
+    String filePath = '$uid/images/0.png';
 
     setState(() {
       _uploadTask = _storage.ref().child(filePath).putFile(widget.file);
     });
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     if(_uploadTask != null){
-      return StreamBuilder<StorageTaskEvent>(
-        stream: _uploadTask.events,
-        builder: (context, snapshot){
-          var event = snapshot?.data?.snapshot;
+      return Container(
+        color: Theme.of(context).backgroundColor,
+        child: StreamBuilder<StorageTaskEvent>(
+          stream: _uploadTask.events,
+          builder: (context, snapshot){
+            var event = snapshot?.data?.snapshot;
 
-          double progressPercent = event != null
-              ? event.bytesTransferred / event.totalByteCount
-              : 0;
+            double progressPercent = event != null
+                ? event.bytesTransferred / event.totalByteCount
+                : 0;
 
-          return progressWidget(context, progressPercent);
-        },
+            return progressWidget(context, progressPercent);
+          },
+        ),
       );
     } else {
-      return FlatButton.icon(
-          onPressed: _startUpload,
-          icon: Icon(Icons.cloud_upload),
-          label: Text('Upload to Firebase')
+      return Container(
+        color: Theme.of(context).backgroundColor,
+        child: FlatButton.icon(
+            onPressed: _startUpload,
+            icon: Icon(Icons.cloud_upload),
+            label: Text('Upload to Firebase')
+        ),
       );
     }
   }
